@@ -21,7 +21,7 @@ interface AIResponse {
 
 const ENV_API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY;
 // User provided key as fallback
-const API_KEY = ENV_API_KEY || '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';
+const API_KEY = ENV_API_KEY || '';
 
 // Use the specific free model requested by user as primary
 const PRIMARY_MODEL = 'google/gemma-3n-e2b-it:free';
