@@ -4,7 +4,7 @@ export function Footer() {
             <div className="container mx-auto px-6">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                     <div className="flex items-center gap-2 text-gray-500 font-medium italic">
-                        <span>Built when felt frustrated</span>
+                        <span>Built when felt frustrated,</span>
 
                         <span>by</span>
                         <a
