@@ -12,7 +12,7 @@ export function Languages() {
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
-                <h3 className="text-xl font-semibold text-gray-900">Languages</h3>
+                <h3 className="text-xl font-bold text-gray-900">Languages</h3>
                 <button
                     type="button"
                     onClick={() => append({ language: '', proficiency: '' })}
@@ -24,9 +24,9 @@ export function Languages() {
             </div>
 
             {fields.map((field, index) => (
-                <div key={field.id} className="p-4 border rounded-lg bg-gray-50">
+                <div key={field.id} className="p-6 border border-gray-200 rounded-2xl bg-white/40 shadow-sm">
                     <div className="flex justify-between mb-4">
-                        <h4 className="text-lg font-medium">Language {index + 1}</h4>
+                        <h4 className="text-lg font-bold text-gray-800">Language {index + 1}</h4>
                         <button
                             type="button"
                             onClick={() => remove(index)}
@@ -38,19 +38,19 @@ export function Languages() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">Language</label>
+                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest">Language</label>
                             <input
                                 type="text"
                                 {...register(`languages.${index}.language`)}
                                 placeholder="e.g., English, Spanish, Mandarin"
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                                className="mt-2 block w-full bg-white/50 border-gray-200 rounded-xl shadow-sm focus:border-purple-500 focus:ring-purple-500 text-gray-900 placeholder-gray-400 transition-all"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">Proficiency</label>
+                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest">Proficiency</label>
                             <select
                                 {...register(`languages.${index}.proficiency`)}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                                className="mt-2 block w-full bg-white/50 border-gray-200 rounded-xl shadow-sm focus:border-purple-500 focus:ring-purple-500 text-gray-900 placeholder-gray-400 transition-all"
                             >
                                 <option value="">Select proficiency</option>
                                 <option value="Native">Native</option>

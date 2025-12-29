@@ -1,0 +1,285 @@
+.intro-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    overflow: hidden;
+}
+
+/* Orb container */
+.intro-orb-container {
+    width: 280px;
+    height: 280px;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.intro-orb-container:hover {
+    transform: scale(1.05);
+}
+
+/* Pulsing glow behind orb */
+.orb-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 320px;
+    height: 320px;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(138, 43, 226, 0.4) 0%, transparent 70%);
+    animation: pulse-glow 2s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes pulse-glow {
+
+    0%,
+    100% {
+        opacity: 0.5;
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.2);
+    }
+}
+
+/* Text container */
+.intro-text {
+    margin-top: 48px;
+    text-align: center;
+    min-height: 80px;
+}
+
+.intro-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.intro-subtitle {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 400;
+}
+
+/* Typewriter effect */
+.typewriter {
+    display: inline-block;
+    overflow: hidden;
+    border-right: 2px solid rgba(138, 43, 226, 0.8);
+    white-space: nowrap;
+    animation: typing 2s steps(25, end), blink-caret 0.75s step-end infinite;
+}
+
+@keyframes typing {
+    from {
+        max-width: 0;
+    }
+
+    to {
+        max-width: 100%;
+    }
+}
+
+@keyframes blink-caret {
+
+    from,
+    to {
+        border-color: transparent;
+    }
+
+    50% {
+        border-color: rgba(138, 43, 226, 0.8);
+    }
+}
+
+/* Enter button */
+.enter-button {
+    margin-top: 48px;
+    padding: 16px 48px;
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: #fff;
+    background: linear-gradient(135deg, #8a2be2 0%, #4169e1 100%);
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    animation: fade-in-up 0.6s ease 2s both;
+}
+
+.enter-button::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(135deg, #8a2be2, #4169e1, #00bfff, #8a2be2);
+    border-radius: 52px;
+    z-index: -1;
+    animation: glow-rotate 3s linear infinite;
+    opacity: 0.7;
+}
+
+@keyframes glow-rotate {
+    0% {
+        filter: hue-rotate(0deg);
+    }
+
+    100% {
+        filter: hue-rotate(360deg);
+    }
+}
+
+.enter-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 40px rgba(138, 43, 226, 0.6);
+}
+
+.enter-button:active {
+    transform: scale(0.98);
+}
+
+@keyframes fade-in-up {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Warp transition */
+.intro-screen.warping {
+    animation: warp-out 1.2s ease-in forwards;
+}
+
+.intro-screen.warping .intro-orb-container {
+    animation: orb-expand 1.2s ease-in forwards;
+}
+
+.intro-screen.warping .intro-text,
+.intro-screen.warping .enter-button {
+    animation: fade-out 0.3s ease-out forwards;
+}
+
+@keyframes warp-out {
+    0% {
+        opacity: 1;
+        filter: blur(0);
+    }
+
+    50% {
+        opacity: 1;
+        filter: blur(0);
+    }
+
+    100% {
+        opacity: 0;
+        filter: blur(20px);
+    }
+}
+
+@keyframes orb-expand {
+    0% {
+        transform: scale(1);
+    }
+
+    100% {
+        transform: scale(20);
+        opacity: 0;
+    }
+}
+
+@keyframes fade-out {
+    to {
+        opacity: 0;
+    }
+}
+
+/* Star particles for warp effect */
+.warp-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.warp-particle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: #fff;
+    border-radius: 50%;
+    opacity: 0;
+}
+
+.intro-screen.warping .warp-particle {
+    animation: particle-streak 1s ease-in forwards;
+}
+
+@keyframes particle-streak {
+    0% {
+        opacity: 0;
+        transform: translateZ(0) scale(1);
+    }
+
+    20% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateZ(500px) scale(3);
+        width: 100px;
+        height: 2px;
+        border-radius: 0;
+    }
+}
+
+/* Hint text */
+.click-hint {
+    position: absolute;
+    bottom: 60px;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    animation: pulse-opacity 2s ease-in-out infinite;
+}
+
+@keyframes pulse-opacity {
+
+    0%,
+    100% {
+        opacity: 0.4;
+    }
+
+    50% {
+        opacity: 0.8;
+    }
+}

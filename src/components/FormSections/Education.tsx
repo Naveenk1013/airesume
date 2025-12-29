@@ -12,7 +12,7 @@ export function Education() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-xl font-semibold text-gray-900">Education</h3>
+        <h3 className="text-xl font-bold text-gray-900">Education</h3>
         <button
           type="button"
           onClick={() => append({ institution: '', degree: '', field: '', graduationDate: '' })}
@@ -24,9 +24,9 @@ export function Education() {
       </div>
 
       {fields.map((field, index) => (
-        <div key={field.id} className="p-4 border rounded-lg bg-gray-50">
+        <div key={field.id} className="p-6 border border-gray-200 rounded-2xl bg-white/40 shadow-sm">
           <div className="flex justify-between mb-4">
-            <h4 className="text-lg font-medium">Education {index + 1}</h4>
+            <h4 className="text-lg font-bold text-gray-800">Education {index + 1}</h4>
             <button
               type="button"
               onClick={() => remove(index)}
@@ -38,7 +38,7 @@ export function Education() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest">
                 Institution <span className="text-red-500">*</span>
               </label>
               <input
@@ -47,14 +47,14 @@ export function Education() {
                   required: 'Institution name is required'
                 })}
                 placeholder="e.g., Stanford University"
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                className="mt-2 block w-full bg-white/50 border-gray-200 rounded-xl shadow-sm focus:border-purple-500 focus:ring-purple-500 text-gray-900 placeholder-gray-400 transition-all"
               />
               {errors.education?.[index]?.institution && (
                 <p className="mt-1 text-sm text-red-600">{errors.education[index]?.institution?.message}</p>
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest">
                 Degree <span className="text-red-500">*</span>
               </label>
               <input
@@ -63,14 +63,14 @@ export function Education() {
                   required: 'Degree is required'
                 })}
                 placeholder="e.g., Bachelor of Science"
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                className="mt-2 block w-full bg-white/50 border-gray-200 rounded-xl shadow-sm focus:border-purple-500 focus:ring-purple-500 text-gray-900 placeholder-gray-400 transition-all"
               />
               {errors.education?.[index]?.degree && (
                 <p className="mt-1 text-sm text-red-600">{errors.education[index]?.degree?.message}</p>
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest">
                 Field of Study <span className="text-red-500">*</span>
               </label>
               <input
@@ -79,14 +79,14 @@ export function Education() {
                   required: 'Field of study is required'
                 })}
                 placeholder="e.g., Computer Science"
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                className="mt-2 block w-full bg-white/50 border-gray-200 rounded-xl shadow-sm focus:border-purple-500 focus:ring-purple-500 text-gray-900 placeholder-gray-400 transition-all"
               />
               {errors.education?.[index]?.field && (
                 <p className="mt-1 text-sm text-red-600">{errors.education[index]?.field?.message}</p>
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest">
                 Graduation Date <span className="text-red-500">*</span>
               </label>
               <input
@@ -94,7 +94,7 @@ export function Education() {
                 {...register(`education.${index}.graduationDate`, {
                   required: 'Graduation date is required'
                 })}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                className="mt-2 block w-full bg-white/50 border-gray-200 rounded-xl shadow-sm focus:border-purple-500 focus:ring-purple-500 text-gray-900 placeholder-gray-400 transition-all"
               />
               {errors.education?.[index]?.graduationDate && (
                 <p className="mt-1 text-sm text-red-600">{errors.education[index]?.graduationDate?.message}</p>

@@ -1,7 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
-import { Send, Loader2, Bot } from 'lucide-react';
+import { Send, Loader2, Bot, Paperclip } from 'lucide-react';
+import Orb from '../UI/Orb';
+import { useToast } from '../../contexts/ToastContext';
 import { ChatMessage } from './ChatMessage';
 import { startInterview, sendMessage, extractResumeData } from '../../utils/aiService';
+import { parseResumeFile } from '../../utils/fileParser';
 import type { ResumeData } from '../../types';
 
 interface AIChatInterfaceProps {
@@ -17,6 +20,7 @@ export interface Message {
 }
 
 export function AIChatInterface({ onComplete, onProgress }: AIChatInterfaceProps) {
+    const { error: showError } = useToast();
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -53,6 +57,7 @@ export function AIChatInterface({ onComplete, onProgress }: AIChatInterfaceProps
                 }
             } catch (error) {
                 if (isMounted.current) {
+                    showError(`Failed to start AI interview: ${(error as Error).message}`);
                     setMessages([{
                         id: 'error',
                         role: 'assistant',
@@ -130,6 +135,7 @@ export function AIChatInterface({ onComplete, onProgress }: AIChatInterfaceProps
             }
         } catch (error) {
             console.error('Failed to send message:', error);
+            showError('Failed to send message. Please try again.');
             // Optional: Add error message to chat
         } finally {
             if (isMounted.current) setIsLoading(false);
@@ -145,9 +151,54 @@ export function AIChatInterface({ onComplete, onProgress }: AIChatInterfaceProps
             }
         } catch (error) {
             console.error('Failed to extract resume data:', error);
-            alert(`Failed to build: ${(error as Error).message}`);
+            showError(`Failed to build resume: ${(error as Error).message}`);
         } finally {
             if (isMounted.current) setIsExtracting(false);
+        }
+    };
+
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        setIsLoading(true);
+        try {
+            const text = await parseResumeFile(file);
+
+            const uploadMessage: Message = {
+                id: Date.now().toString(),
+                role: 'user',
+                content: `Here is my existing resume content. Please analyze it and help me improve it:\n\n${text}`,
+                timestamp: Date.now()
+            };
+
+            setMessages(prev => [...prev, uploadMessage]);
+
+            const response = await sendMessage([...messages, uploadMessage], ''); // Empty user input since it's already in history
+
+            if (isMounted.current) {
+                setMessages(prev => [...prev, {
+                    id: (Date.now() + 1).toString(),
+                    role: 'assistant',
+                    content: response,
+                    timestamp: Date.now()
+                }]);
+            }
+        } catch (error) {
+            console.error('File upload failed:', error);
+            if (isMounted.current) {
+                setMessages(prev => [...prev, {
+                    id: Date.now().toString(),
+                    role: 'system', // Display as system/error message
+                    content: `❌ Failed to read file: ${(error as Error).message}`,
+                    timestamp: Date.now()
+                }]);
+            }
+        } finally {
+            if (isMounted.current) setIsLoading(false);
+            if (fileInputRef.current) fileInputRef.current.value = '';
         }
     };
 
@@ -156,8 +207,14 @@ export function AIChatInterface({ onComplete, onProgress }: AIChatInterfaceProps
             {/* Header */}
             <div className="bg-white p-4 border-b flex justify-between items-center px-6">
                 <div>
-                    <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                        🤖 AI Mode
+                    <h2 className="text-lg font-bold text-gray-900 flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full overflow-hidden bg-black relative">
+                            <Orb
+                                hoverIntensity={isLoading || isExtracting ? 0.8 : 0.2}
+                                forceHoverState={isLoading || isExtracting}
+                            />
+                        </div>
+                        LANCE - AI Resume Expert
                     </h2>
                 </div>
                 <div className="flex gap-4">
@@ -203,6 +260,24 @@ export function AIChatInterface({ onComplete, onProgress }: AIChatInterfaceProps
                         rows={1}
                         disabled={isLoading || isExtracting}
                     />
+
+                    <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleFileUpload}
+                        accept=".pdf,.docx"
+                        className="hidden"
+                    />
+
+                    <button
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={isLoading || isExtracting}
+                        className="text-gray-500 hover:text-purple-600 p-3 rounded-lg hover:bg-gray-100 disabled:opacity-50 transition-colors"
+                        title="Upload Resume"
+                    >
+                        <Paperclip size={20} />
+                    </button>
+
                     <button
                         onClick={handleSend}
                         disabled={!input.trim() || isLoading || isExtracting}

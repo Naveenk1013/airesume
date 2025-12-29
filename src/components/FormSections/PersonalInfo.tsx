@@ -34,7 +34,7 @@ export function PersonalInfo() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-xl font-semibold text-gray-900">Personal Information</h3>
+        <h3 className="text-xl font-bold text-gray-900">Personal Information</h3>
         <button
           type="button"
           onClick={() => setShowAIModal(true)}
@@ -47,7 +47,7 @@ export function PersonalInfo() {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest">
             Full Name <span className="text-red-500">*</span>
           </label>
           <input
@@ -56,14 +56,14 @@ export function PersonalInfo() {
               required: 'Full name is required',
               minLength: { value: 2, message: 'Name must be at least 2 characters' }
             })}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+            className="mt-2 block w-full bg-white/50 border-gray-200 rounded-xl shadow-sm focus:border-purple-500 focus:ring-purple-500 text-gray-900 placeholder-gray-400 transition-all"
           />
           {errors.personalInfo?.fullName && (
             <p className="mt-1 text-sm text-red-600">{errors.personalInfo.fullName.message}</p>
           )}
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest">
             Professional Title <span className="text-red-500">*</span>
           </label>
           <input
@@ -71,14 +71,14 @@ export function PersonalInfo() {
             {...register('personalInfo.title', {
               required: 'Professional title is required'
             })}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+            className="mt-2 block w-full bg-white/50 border-gray-200 rounded-xl shadow-sm focus:border-purple-500 focus:ring-purple-500 text-gray-900 placeholder-gray-400 transition-all"
           />
           {errors.personalInfo?.title && (
             <p className="mt-1 text-sm text-red-600">{errors.personalInfo.title.message}</p>
           )}
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest">
             Email <span className="text-red-500">*</span>
           </label>
           <input
@@ -90,14 +90,14 @@ export function PersonalInfo() {
                 message: 'Invalid email address'
               }
             })}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+            className="mt-2 block w-full bg-white/50 border-gray-200 rounded-xl shadow-sm focus:border-purple-500 focus:ring-purple-500 text-gray-900 placeholder-gray-400 transition-all"
           />
           {errors.personalInfo?.email && (
             <p className="mt-1 text-sm text-red-600">{errors.personalInfo.email.message}</p>
           )}
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest">
             Phone <span className="text-red-500">*</span>
           </label>
           <input
@@ -109,25 +109,25 @@ export function PersonalInfo() {
                 message: 'Invalid phone number format'
               }
             })}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+            className="mt-2 block w-full bg-white/50 border-gray-200 rounded-xl shadow-sm focus:border-purple-500 focus:ring-purple-500 text-gray-900 placeholder-gray-400 transition-all"
           />
           {errors.personalInfo?.phone && (
             <p className="mt-1 text-sm text-red-600">{errors.personalInfo.phone.message}</p>
           )}
         </div>
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest">
             Location
           </label>
           <input
             type="text"
             {...register('personalInfo.location')}
             placeholder="City, State/Country"
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+            className="mt-2 block w-full bg-white/50 border-gray-200 rounded-xl shadow-sm focus:border-purple-500 focus:ring-purple-500 text-gray-900 placeholder-gray-400 transition-all"
           />
         </div>
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest">
             Professional Summary <span className="text-red-500">*</span>
           </label>
           <textarea
@@ -137,7 +137,7 @@ export function PersonalInfo() {
             })}
             rows={4}
             placeholder="Write a compelling professional summary highlighting your key skills and experience..."
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+            className="mt-2 block w-full bg-white/50 border-gray-200 rounded-xl shadow-sm focus:border-purple-500 focus:ring-purple-500 text-gray-900 placeholder-gray-400 transition-all"
           />
           {errors.personalInfo?.summary && (
             <p className="mt-1 text-sm text-red-600">{errors.personalInfo.summary.message}</p>

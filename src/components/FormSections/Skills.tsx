@@ -6,7 +6,7 @@ import { AIAssistantModal, type UserCareerInfo } from '../AIAssistantModal';
 import { suggestSkills } from '../../utils/aiService';
 
 export function Skills() {
-  const { register, watch, setValue } = useFormContext<ResumeData>();
+  const { watch, setValue } = useFormContext<ResumeData>();
   const [newSkill, setNewSkill] = useState('');
   const [showAIModal, setShowAIModal] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -43,7 +43,7 @@ export function Skills() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-xl font-semibold text-gray-900">Skills</h3>
+        <h3 className="text-xl font-bold text-gray-900">Skills</h3>
         <button
           type="button"
           onClick={() => setShowAIModal(true)}
@@ -62,7 +62,7 @@ export function Skills() {
           onChange={(e) => setNewSkill(e.target.value)}
           onKeyPress={(e) => e.key === 'Enter' && addSkill()}
           placeholder="Add a skill"
-          className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+          className="flex-1 bg-white/50 border-gray-200 rounded-xl shadow-sm focus:border-purple-500 focus:ring-purple-500 text-gray-900 placeholder-gray-400 transition-all"
         />
         <button
           type="button"
@@ -78,13 +78,13 @@ export function Skills() {
         {skills.map((skill, index) => (
           <div
             key={index}
-            className="flex items-center gap-2 px-3 py-1 bg-purple-100 text-purple-800 rounded-full"
+            className="flex items-center gap-2 px-4 py-1.5 bg-purple-50 text-purple-700 rounded-full border border-purple-100 font-medium shadow-sm"
           >
             {skill}
             <button
               type="button"
               onClick={() => removeSkill(skill)}
-              className="text-purple-600 hover:text-purple-800"
+              className="text-purple-400 hover:text-purple-600 transition-colors"
             >
               <X size={16} />
             </button>

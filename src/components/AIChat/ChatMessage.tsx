@@ -1,4 +1,5 @@
-import { Bot, User } from 'lucide-react';
+import { User } from 'lucide-react';
+import Orb from '../UI/Orb';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -19,10 +20,16 @@ export function ChatMessage({ message }: ChatMessageProps) {
     return (
         <div className={`flex items-start gap-4 ${isUser ? 'flex-row-reverse' : ''}`}>
             <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${isUser ? 'bg-purple-600 text-white' : 'bg-gray-200 text-gray-700'
+                className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden relative ${isUser ? 'bg-purple-600 text-white' : 'bg-black'
                     }`}
             >
-                {isUser ? <User size={18} /> : <Bot size={18} />}
+                {isUser ? (
+                    <User size={18} />
+                ) : (
+                    <div className="absolute inset-0 w-full h-full">
+                        <Orb hoverIntensity={0.3} rotateOnHover={true} />
+                    </div>
+                )}
             </div>
             <div
                 className={`max-w-[80%] p-4 rounded-xl shadow-sm ${isUser

@@ -12,7 +12,7 @@ export function Certifications() {
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
-                <h3 className="text-xl font-semibold text-gray-900">Certifications</h3>
+                <h3 className="text-xl font-bold text-gray-900">Certifications</h3>
                 <button
                     type="button"
                     onClick={() => append({ name: '', issuer: '', date: '' })}
@@ -24,9 +24,9 @@ export function Certifications() {
             </div>
 
             {fields.map((field, index) => (
-                <div key={field.id} className="p-4 border rounded-lg bg-gray-50">
+                <div key={field.id} className="p-6 border border-gray-200 rounded-2xl bg-white/40 shadow-sm">
                     <div className="flex justify-between mb-4">
-                        <h4 className="text-lg font-medium">Certification {index + 1}</h4>
+                        <h4 className="text-lg font-bold text-gray-800">Certification {index + 1}</h4>
                         <button
                             type="button"
                             onClick={() => remove(index)}
@@ -38,29 +38,29 @@ export function Certifications() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="md:col-span-2">
-                            <label className="block text-sm font-medium text-gray-700">Certification Name</label>
+                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest">Certification Name</label>
                             <input
                                 type="text"
                                 {...register(`certifications.${index}.name`)}
                                 placeholder="e.g., AWS Certified Solutions Architect"
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                                className="mt-2 block w-full bg-white/50 border-gray-200 rounded-xl shadow-sm focus:border-purple-500 focus:ring-purple-500 text-gray-900 placeholder-gray-400 transition-all"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">Issuing Organization</label>
+                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest">Issuing Organization</label>
                             <input
                                 type="text"
                                 {...register(`certifications.${index}.issuer`)}
                                 placeholder="e.g., Amazon Web Services"
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                                className="mt-2 block w-full bg-white/50 border-gray-200 rounded-xl shadow-sm focus:border-purple-500 focus:ring-purple-500 text-gray-900 placeholder-gray-400 transition-all"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">Date Obtained</label>
+                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest">Date Obtained</label>
                             <input
                                 type="date"
                                 {...register(`certifications.${index}.date`)}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                                className="mt-2 block w-full bg-white/50 border-gray-200 rounded-xl shadow-sm focus:border-purple-500 focus:ring-purple-500 text-gray-900 placeholder-gray-400 transition-all"
                             />
                         </div>
                     </div>

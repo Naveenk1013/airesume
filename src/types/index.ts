@@ -5,37 +5,54 @@ export interface ResumeTemplate {
   thumbnail: string;
 }
 
+export interface PersonalInfo {
+  fullName: string;
+  email: string;
+  phone: string;
+  location: string;
+  photo?: string;
+  title: string;
+  summary: string;
+}
+
+export interface Experience {
+  company: string;
+  position: string;
+  startDate: string;
+  endDate: string;
+  description: string;
+}
+
+export interface Education {
+  institution: string;
+  degree: string;
+  field: string;
+  graduationDate: string;
+}
+
+export interface Language {
+  language: string;
+  proficiency: string;
+}
+
+export interface Certification {
+  name: string;
+  issuer: string;
+  date: string;
+}
+
+export interface CustomSection {
+  id: string;
+  title: string;
+  content: string;
+}
+
 export interface ResumeData {
-  personalInfo: {
-    fullName: string;
-    email: string;
-    phone: string;
-    location: string;
-    photo?: string;
-    title: string;
-    summary: string;
-  };
-  experience: Array<{
-    company: string;
-    position: string;
-    startDate: string;
-    endDate: string;
-    description: string;
-  }>;
-  education: Array<{
-    institution: string;
-    degree: string;
-    field: string;
-    graduationDate: string;
-  }>;
+  personalInfo: PersonalInfo;
+  experience: Experience[];
+  education: Education[];
   skills: string[];
-  languages: Array<{
-    language: string;
-    proficiency: string;
-  }>;
-  certifications: Array<{
-    name: string;
-    issuer: string;
-    date: string;
-  }>;
+  languages: Language[];
+  certifications: Certification[];
+  customSections?: CustomSection[];
 }

@@ -19,9 +19,15 @@ interface AIResponse {
     reasoning_details?: any;
 }
 
+import { logger } from './logger';
+
 const ENV_API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY;
 // User provided key as fallback
 const API_KEY = ENV_API_KEY || '';
+
+if (!API_KEY) {
+    logger.warn('⚠️ OpenRouter API Key is missing. AI features will not work.');
+}
 
 // Use the specific free model requested by user as primary
 const PRIMARY_MODEL = 'google/gemma-3n-e2b-it:free';
@@ -33,8 +39,12 @@ const PRIMARY_MODEL = 'google/gemma-3n-e2b-it:free';
  */
 async function callAI(messages: any[], enableReasoning = false): Promise<AIResponse> {
     const makeRequest = async (model: string) => {
+        if (!API_KEY) {
+            throw new Error('OpenRouter API Key is missing. Please add VITE_OPENROUTER_API_KEY to your .env file.');
+        }
+
         // Debug log to verify configuration
-        console.log(`🤖 AI Request Details:
+        logger.log(`🤖 AI Request Details:
       Model: ${model}
       API Key Loaded: ${!!API_KEY}
     `);
@@ -87,7 +97,7 @@ async function callAI(messages: any[], enableReasoning = false): Promise<AIRespo
 
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
-            console.error('❌ AI API Failed:', {
+            logger.error('❌ AI API Failed:', {
                 status: response.status,
                 statusText: response.statusText,
                 error: errorData
@@ -101,12 +111,18 @@ async function callAI(messages: any[], enableReasoning = false): Promise<AIRespo
     try {
         // Try primary model
         const result = await makeRequest(PRIMARY_MODEL);
+
+        // Log reasoning if enabled and available
+        if (enableReasoning && result.choices[0].message.reasoning_details) {
+            logger.log('🤔 AI Reasoning:', result.choices[0].message.reasoning_details);
+        }
+
         return {
             content: result.choices[0].message.content,
             reasoning_details: result.choices[0].message.reasoning_details,
         };
     } catch (error) {
-        console.error('❌ AI model failed:', error);
+        logger.error('❌ AI model failed:', error);
         throw new Error(`AI Request failed: ${(error as Error).message}`);
     }
 }
@@ -289,23 +305,60 @@ export async function generateCompleteResume(userInfo: {
  * Start the interview process with a system prompt
  */
 export async function startInterview(): Promise<string> {
-    const systemPrompt = `You are an expert Resume Writer and Career Coach. Your goal is to interview the user to gather information for their ATS-optimized resume. 
+    const systemPrompt = `You are LANCE, a professional Resume Writer and Career Coach. Your goal is to help the user create a resume with the highest possible ATS score, completely free and hassle-free.
   
+  Persona:
+  - Name: LANCE
+  - Role: Expert Resume Strategist & ATS Specialist
+  - Tone: Professional, Encouraging, Efficient, and Insightful.
+  - Objective: Gather exact details to build a top-tier resume.
+
+  AVAILABLE FEATURES (mention these to users when relevant):
+  
+  1. PRESET TEMPLATES:
+     - Classic: Clean, traditional single-column format
+     - Executive: Bold headers with professional styling
+     - Minimal: Simple and modern minimalist design
+     - Creative: Unique layout with accent colors
+     - Corporate: Two-column professional format
+  
+  2. CANVAS EDITING MODE (Selection Mode):
+     - Users can click "Select" button to enter editing mode
+     - In this mode, users can:
+       • Click any text element to select it
+       • Shift+Click to select multiple elements
+       • Press Delete/Backspace to hide elements they don't want
+       • Drag the Move icon to reposition elements anywhere
+       • Click "Restore" to bring back hidden elements
+       • Click "Format" to change text styles (bold, italic, color, size)
+     - All changes persist after page refresh
+  
+  3. CUSTOM LAYOUTS:
+     - If user wants a custom design, explain they can:
+       • Start with any preset template
+       • Use Selection Mode to move elements around
+       • Delete sections they don't need
+       • Customize colors and fonts using the toolbar
+     - For truly custom designs, gather their layout preferences and I'll provide guidance
+
   Process:
-  1. Introduce yourself briefly and friendly.
-  2. Ask for their Personal Info (Name, Role, Location).
-  3. Then move to Experience (Companies, Roles, Dates, Impacts).
-  4. Then Education.
-  5. Then Skills.
-  6. Finally, ask if they want to add anything else.
+  1. Introduce yourself as LANCE and mention your goal (high ATS score, free service).
+  2. Briefly mention that they can choose preset templates OR customize the layout with our editing tools.
+  3. Ask for their Personal Info (Name, Role, Location).
+  4. Then move to Experience (Companies, Roles, Dates, Impacts).
+  5. Then Education.
+  6. Then Skills.
+  7. Ask about template preference (preset or custom - explain the options if they ask).
+  8. Finally, ask if they want to add anything else.
 
   Rules:
   - Ask ONE question at a time. Do not overwhelm the user.
   - Be encouraging and professional.
   - If the user gives a short answer, ask a follow-up to get more detail (e.g., "What tools did you use?" or "What was the result of that project?").
+  - When users ask about customization, explain the canvas editing features.
   - Keep your responses concise. 
   
-  Start by introducing yourself and asking for their name and target job title.`;
+  Start by introducing yourself, briefly mention the customization options, and asking for their name and target job title.`;
 
     // Combine system prompt with user message for better compatibility with free models
     const combinedPrompt = `${systemPrompt}\n\nUser: Hi, let's start the interview.`;
@@ -405,8 +458,8 @@ export async function extractResumeData(history: any[]): Promise<any> {
     try {
         return JSON.parse(jsonStr);
     } catch (e) {
-        console.error("Failed to parse AI extraction:", e);
-        console.log("Raw output:", response.content);
+        logger.error("Failed to parse AI extraction:", e);
+        logger.log("Raw output:", response.content);
 
         // Final attempt: aggressive clean up
         try {
@@ -414,6 +467,7 @@ export async function extractResumeData(history: any[]): Promise<any> {
             const cleanStr = jsonStr.replace(/[\x00-\x1F\x7F-\x9F]/g, "");
             return JSON.parse(cleanStr);
         } catch (retryError) {
+            logger.error('AI Extraction Failed. Raw response:', response.content);
             throw new Error("Failed to parse resume data. The AI output was not valid JSON. Please try again.");
         }
     }
@@ -483,8 +537,124 @@ export async function extractDataFromText(text: string): Promise<any> {
     try {
         return JSON.parse(jsonStr);
     } catch (e) {
-        console.error("Failed to parse AI extraction:", e);
+        logger.error("Failed to parse AI extraction:", e);
         // Fallback or retry logic could go here
         throw new Error("Failed to parse resume data from AI response.");
+    }
+}
+
+/**
+ * Generate a custom template configuration based on user preferences
+ */
+export interface TemplatePreferences {
+    layout?: 'single-column' | 'two-column' | 'sidebar-left' | 'sidebar-right';
+    colorScheme?: 'professional' | 'modern' | 'creative' | 'minimal' | 'dark' | 'custom';
+    customColors?: { primary?: string; secondary?: string; background?: string };
+    industry?: string;
+    style?: 'formal' | 'casual' | 'creative' | 'technical';
+    sections?: string[];
+    sidebarSections?: string[];
+}
+
+export async function generateTemplateConfig(preferences: TemplatePreferences): Promise<any> {
+    const prompt = `Generate a resume template configuration JSON based on these preferences:
+
+Layout: ${preferences.layout || 'auto-choose based on industry'}
+Color Scheme: ${preferences.colorScheme || 'professional'}
+${preferences.customColors ? `Custom Colors: ${JSON.stringify(preferences.customColors)}` : ''}
+Industry: ${preferences.industry || 'general'}
+Style: ${preferences.style || 'professional'}
+${preferences.sections ? `Sections to include: ${preferences.sections.join(', ')}` : ''}
+${preferences.sidebarSections ? `Sidebar sections: ${preferences.sidebarSections.join(', ')}` : ''}
+
+Generate a complete template configuration JSON with this EXACT structure:
+{
+  "id": "ai-generated",
+  "name": "string (descriptive name)",
+  "layout": "single-column" | "two-column" | "sidebar-left" | "sidebar-right",
+  "sections": [
+    { "type": "personal" | "summary" | "experience" | "education" | "skills" | "languages" | "certifications", "visible": true/false, "order": number, "inSidebar": true/false }
+  ],
+  "colors": {
+    "primary": "hex color",
+    "secondary": "hex color", 
+    "background": "hex color",
+    "headerBg": "hex color",
+    "text": "hex color",
+    "textMuted": "hex color"
+  },
+  "typography": {
+    "fontFamily": "font stack",
+    "headingFontFamily": "font stack",
+    "baseFontSize": number,
+    "headingScale": number
+  },
+  "spacing": {
+    "sectionGap": number,
+    "itemGap": number,
+    "padding": number
+  },
+  "headerStyle": "centered" | "left-aligned" | "split" | "minimal",
+  "showPhoto": true/false,
+  "sidebarWidth": number (20-40)
+}
+
+Rules:
+- Return ONLY the valid JSON object, no explanations
+- Choose colors that are professional and ATS-friendly
+- For creative industries, use more vibrant colors
+- For corporate/technical, use more muted professional colors
+- Include all standard sections unless user specified otherwise
+- For two-column layouts, put skills/languages/certifications in sidebar`;
+
+    const response = await callAI([
+        { role: 'user', content: prompt }
+    ]);
+
+    let jsonStr = response.content;
+    jsonStr = jsonStr.replace(/```json/g, '').replace(/```/g, '');
+
+    const firstBrace = jsonStr.indexOf('{');
+    const lastBrace = jsonStr.lastIndexOf('}');
+
+    if (firstBrace !== -1 && lastBrace !== -1) {
+        jsonStr = jsonStr.substring(firstBrace, lastBrace + 1);
+    }
+
+    try {
+        return JSON.parse(jsonStr);
+    } catch (e) {
+        logger.error("Failed to parse template config:", e);
+        // Return a safe default
+        return {
+            id: 'ai-generated',
+            name: 'Custom Template',
+            layout: preferences.layout || 'single-column',
+            sections: [
+                { type: 'personal', visible: true, order: 0, inSidebar: false },
+                { type: 'summary', visible: true, order: 1, inSidebar: false },
+                { type: 'experience', visible: true, order: 2, inSidebar: false },
+                { type: 'education', visible: true, order: 3, inSidebar: false },
+                { type: 'skills', visible: true, order: 4, inSidebar: false },
+            ],
+            colors: {
+                primary: '#2563eb',
+                secondary: '#7c3aed',
+                background: '#ffffff',
+                headerBg: '#f8fafc',
+                text: '#1f2937',
+                textMuted: '#6b7280',
+            },
+            typography: {
+                fontFamily: 'Inter, system-ui, sans-serif',
+                headingFontFamily: 'Inter, system-ui, sans-serif',
+                baseFontSize: 14,
+                headingScale: 1.25,
+            },
+            spacing: { sectionGap: 24, itemGap: 12, padding: 40 },
+            headerStyle: 'centered',
+            showPhoto: true,
+            sidebarWidth: 35,
+        };
     }
 }

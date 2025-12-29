@@ -1,3 +1,195 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Step 1: Pixel-Perfect A4 Container */
+.resume-page {
+  width: 794px;
+  min-height: 1120px;
+  /* Slightly less than 1123px to prevent blank page */
+  /* A4 height in px @ 96 DPI */
+  padding: 30px;
+  margin: auto;
+  background: white;
+  box-sizing: border-box;
+  overflow: visible;
+  /* Changed from hidden to allow multi-page content */
+  font-family: Arial, Helvetica, sans-serif;
+  /* Safe system fonts */
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.resume-page * {
+  line-height: 1.4;
+}
+
+/* ===== PAGE BREAK CONTROL FOR PDF EXPORT ===== */
+
+/* Prevent page breaks inside these elements */
+.resume-section,
+.experience-item,
+.education-item,
+.certification-item,
+.language-item,
+.skill-group,
+.no-break {
+  page-break-inside: avoid;
+  break-inside: avoid;
+  margin-bottom: 16px;
+}
+
+/* Allow page breaks before sections (but not the first one) */
+.resume-section:not(:first-child) {
+  page-break-before: auto;
+  break-before: auto;
+}
+
+/* Keep section headers with their content */
+.section-header,
+.resume-section h2,
+.resume-section h3 {
+  page-break-after: avoid;
+  break-after: avoid;
+}
+
+/* Ensure experience/education entries stay together */
+.experience-item,
+.education-item {
+  page-break-inside: avoid;
+  break-inside: avoid;
+  /* Add slight padding to avoid being directly at page edge */
+  padding-bottom: 8px;
+}
+
+/* Keep job title and company together */
+.job-header,
+.edu-header {
+  page-break-inside: avoid;
+  break-inside: avoid;
+  page-break-after: avoid;
+  break-after: avoid;
+}
+
+/* Orphan/widow control - keep at least 3 lines together */
+.resume-page p,
+.resume-page li,
+.resume-page span {
+  orphans: 3;
+  widows: 3;
+}
+
+/* For multi-page resumes - add page margins */
+@media print {
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  html,
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    height: auto;
+  }
+
+  .resume-page {
+    width: 210mm !important;
+    min-height: 297mm !important;
+    height: auto;
+    padding: 15mm !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    page-break-after: auto;
+    background: var(--bg-color, white) !important;
+  }
+
+  .resume-section {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .experience-item,
+  .education-item,
+  .certification-item {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Hide elements that shouldn't print */
+  .no-print {
+    display: none !important;
+  }
+}
+
+/* Utility class to force page break before an element */
+.page-break-before {
+  page-break-before: always;
+  break-before: page;
+}
+
+/* Utility class to force no page break */
+.keep-together {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+/* Hide placeholders when exporting */
+.exporting [data-placeholder]:empty::before {
+  content: none !important;
+  display: none !important;
+}
+
+/* During export, ensure proper containment and formatting */
+.exporting {
+  /* Reset any transforms or animations */
+  transform: none !important;
+  animation: none !important;
+  transition: none !important;
+}
+
+.exporting.resume-page {
+  /* Fixed dimensions for consistent export */
+  width: 794px !important;
+  min-height: 1123px !important;
+  padding: 40px !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+  /* Ensure clean text rendering */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+.exporting .resume-section,
+.exporting .experience-item,
+.exporting .education-item {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+/* Ensure proper text wrapping during export */
+.exporting p,
+.exporting span,
+.exporting div {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.6s ease-out forwards;
+}

@@ -6,33 +6,46 @@ interface ATSScoreCalculatorProps {
 }
 
 export function ATSScoreCalculator({ data, jobDescription }: ATSScoreCalculatorProps) {
+  // Guard clause for undefined data
+  if (!data || !data.personalInfo) {
+    return null;
+  }
+
   const calculateScore = () => {
     let score = 0;
     const maxScore = 100;
 
+    // Use default empty arrays/objects to prevent crashes
+    const experience = data.experience || [];
+    const skills = data.skills || [];
+    const education = data.education || [];
+    const languages = data.languages || [];
+    const certifications = data.certifications || [];
+    const personalInfo = data.personalInfo || {};
+
     // Basic information completeness
-    if (data.personalInfo.fullName) score += 5;
-    if (data.personalInfo.email) score += 5;
-    if (data.personalInfo.phone) score += 5;
-    if (data.personalInfo.summary && data.personalInfo.summary.length > 100) score += 10;
+    if (personalInfo.fullName) score += 5;
+    if (personalInfo.email) score += 5;
+    if (personalInfo.phone) score += 5;
+    if (personalInfo.summary && personalInfo.summary.length > 100) score += 10;
 
     // Experience quality
-    score += Math.min(data.experience.length * 5, 20);
-    data.experience.forEach(exp => {
+    score += Math.min(experience.length * 5, 20);
+    experience.forEach(exp => {
       if (exp.description && exp.description.length > 100) score += 5;
     });
 
     // Skills relevance
-    score += Math.min(data.skills.length * 2, 15);
+    score += Math.min(skills.length * 2, 15);
 
     // Education
-    score += Math.min(data.education.length * 5, 15);
+    score += Math.min(education.length * 5, 15);
 
     // Languages
-    score += Math.min(data.languages.length * 2, 10);
+    score += Math.min(languages.length * 2, 10);
 
     // Certifications
-    score += Math.min(data.certifications.length * 5, 15);
+    score += Math.min(certifications.length * 5, 15);
 
     // Keywords matching if job description is provided
     if (jobDescription) {
@@ -55,28 +68,33 @@ export function ATSScoreCalculator({ data, jobDescription }: ATSScoreCalculatorP
 
   const getImprovementTips = () => {
     const tips = [];
+    const experience = data.experience || [];
+    const skills = data.skills || [];
+    const languages = data.languages || [];
+    const certifications = data.certifications || [];
+    const personalInfo = data.personalInfo || {};
 
-    if (!data.personalInfo.summary || data.personalInfo.summary.length < 100) {
+    if (!personalInfo.summary || personalInfo.summary.length < 100) {
       tips.push('Add a detailed professional summary (100+ characters)');
     }
 
-    if (data.experience.length < 2) {
+    if (experience.length < 2) {
       tips.push('Add more work experience entries');
     }
 
-    if (data.skills.length < 8) {
+    if (skills.length < 8) {
       tips.push('List more relevant skills (aim for 8+)');
     }
 
-    if (data.languages.length === 0) {
+    if (languages.length === 0) {
       tips.push('Add language proficiencies to stand out');
     }
 
-    if (data.certifications.length === 0) {
+    if (certifications.length === 0) {
       tips.push('Include relevant certifications to boost credibility');
     }
 
-    data.experience.forEach((exp, index) => {
+    experience.forEach((exp, index) => {
       if (!exp.description || exp.description.length < 100) {
         tips.push(`Add more details to experience #${index + 1}`);
       }
