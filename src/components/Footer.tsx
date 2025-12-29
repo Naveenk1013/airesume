@@ -1,13 +1,11 @@
-import { Heart } from 'lucide-react';
-
 export function Footer() {
     return (
         <footer className="py-12 mt-20 border-t border-gray-200/50">
             <div className="container mx-auto px-6">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                     <div className="flex items-center gap-2 text-gray-500 font-medium italic">
-                        <span>Built with</span>
-                        <Heart size={16} className="text-red-400 fill-current" />
+                        <span>Built when felt frustrated</span>
+
                         <span>by</span>
                         <a
                             href="https://naveen-kr1.netlify.app/"
